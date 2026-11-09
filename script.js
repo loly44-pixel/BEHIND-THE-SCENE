@@ -1,875 +1,428 @@
 
-/* =========================================
-   BEHIND THE SCENE
-   Interaction, sound and translation
-========================================= */
-
-const scenes = [...document.querySelectorAll(".scene")];
-const progressDots = [...document.querySelectorAll(".progress-dot")];
-
-const nextButton = document.getElementById("nextScene");
-const prevButton = document.getElementById("prevScene");
-
-const languageToggle = document.getElementById("languageToggle");
-const soundToggle = document.getElementById("soundToggle");
-const soundIcon = document.getElementById("soundIcon");
-
-const startJourney = document.getElementById("startJourney");
-const restartJourney = document.getElementById("restartJourney");
-
-const revealButton = document.getElementById("revealButton");
-const revealStage = document.getElementById("revealStage");
-const revealCaption = document.getElementById("revealCaption");
-
-const sourceToggle = document.getElementById("sourceToggle");
-const sourcePanel = document.getElementById("sourcePanel");
-
-const discoveryDetail = document.getElementById("discoveryDetail");
-const detailIcon = document.getElementById("detailIcon");
-const detailTitle = document.getElementById("detailTitle");
-const detailText = document.getElementById("detailText");
-
-let currentScene = 0;
-let currentLanguage = "ar";
-let soundEnabled = true;
-let audioContext = null;
-
-
-/* =========================================
-   TRANSLATION
-========================================= */
-
-const translations = {
-
-  ar: {
-
-    heroTitle: "خلف الستار",
-
-    heroText:
-      "هل تعرفين ما الذي يحدث خلف الأشياء التي تستخدمينها كل يوم؟",
-
-    start: "ابدئي الرحلة",
-
-    microCopy:
-      "تجربة تفاعلية لاستكشاف الذكاء الاصطناعي",
-
-    definitionTitle:
-      "الذكاء الاصطناعي بعيني",
-
-    definitionText:
-      "أرى الذكاء الاصطناعي كمساحة تتعلم فيها الآلات من البيانات، لتساعدنا على فهم العالم واكتشاف احتمالات لم نكن نراها من قبل.",
-
-    definitionFooter:
-      "ليس بديلًا عن خيالنا، بل أداة توسّع حدوده.",
-
-    discover: "اكتشفي ما حولك",
-
-    aroundTitle:
-      "الذكاء أقرب مما تتخيلين",
-
-    aroundIntro:
-      "اختاري أحد الأبواب الثلاثة واكتشفي كيف يعمل الذكاء الاصطناعي حولنا.",
-
-    visionTitle:
-      "الرؤية الذكية",
-
-    visionShort:
-      "كيف تفهم الآلة الصور؟",
-
-    languageTitle:
-      "فهم اللغة",
-
-    languageShort:
-      "كيف تفهم الآلة كلماتنا؟",
-
-    recommendTitle:
-      "التوصيات الذكية",
-
-    recommendShort:
-      "كيف تعرف المنصات ما قد يعجبنا؟",
-
-    explore: "اكتشفي ←",
-
-    chooseCard:
-      "اختاري أحد الأبواب",
-
-    chooseText:
-      "اضغطي على أحد العناصر لتكتشفي ما وراءه.",
-
-    surprise:
-      "اكتشفي المفاجأة",
-
-    surpriseTitle:
-      "من الضوضاء إلى الصورة",
-
-    surpriseIntro:
-      "معلومة أثارت فضولي: بعض نماذج الذكاء الاصطناعي تستطيع توليد صورة من ضوضاء عشوائية، عبر إزالة الضوضاء تدريجيًا.",
-
-    noiseCaption:
-      "البداية: ضوضاء عشوائية",
-
-    reveal:
-      "اكشفي كيف تتكوّن الصورة",
-
-    revealNote:
-      "هذا مشهد توضيحي مبسط لفكرة إزالة الضوضاء، وليس محاكاة فعلية لنموذج توليد صور.",
-
-    sources:
-      "المصادر العلمية",
-
-    behindScenes:
-      "خلف كواليس تجربتي",
-
-    toolsTitle:
-      "الإنسان خلف الذكاء الاصطناعي",
-
-    toolsIntro:
-      "الذكاء الاصطناعي ساعدني على تحويل الفكرة إلى تجربة، لكن اختياراتي وتوجيهي هما ما منحاها هويتها.",
-
-    toolOneTitle:
-      "الأدوات",
-
-    toolOneText:
-      "هنا نوضح أسماء الأدوات التي استخدمتها فعلًا في البحث والتصميم والتطوير.",
-
-    toolTwoTitle:
-      "ماذا قدم الذكاء؟",
-
-    toolTwoText:
-      "ساعدني في استكشاف الأفكار، وتطوير المحتوى، وتحويل التصورات إلى عناصر رقمية.",
-
-    toolThreeTitle:
-      "بصمتي الشخصية",
-
-    toolThreeText:
-      "اخترت أسلوب التجربة، ووجهت التصميم، وراجعت المحتوى، وحددت ما أريد تغييره.",
-
-    humanNote:
-      "الأداة بين يدي، لكن الفكرة والرؤية والقرارات الإبداعية هي مسؤوليتي.",
-
-    restart:
-      "أعيدي الرحلة",
-
-    noiseAfter:
-      "الصورة تتشكل تدريجيًا",
-
-    noiseComplete:
-      "من الضوضاء إلى صورة متماسكة",
-
-    visionDetail:
-      "تستخدم أنظمة الرؤية الحاسوبية نماذج تتعلم من الصور والبيانات لتتعرف على الأشياء والأنماط. مثال: مساعدة السيارة على التعرف على المشاة.",
-
-    languageDetail:
-      "تتعلم نماذج معالجة اللغة أنماط الكلمات والسياق لتساعد في الترجمة، والتلخيص، وفهم الأسئلة.",
-
-    recommendationDetail:
-      "تحلل أنظمة التوصية أنماط التفاعل والاهتمامات لتقترح محتوى قد يكون مناسبًا للمستخدم.",
-
-    soundOn:
-      "تشغيل الصوت",
-
-    soundOff:
-      "إيقاف الصوت"
-
-  },
-
-
-  en: {
-
-    heroTitle:
-      "Behind the Scene",
-
-    heroText:
-      "Have you ever wondered what happens behind the things you use every day?",
-
-    start:
-      "Begin the journey",
-
-    microCopy:
-      "An interactive exploration of artificial intelligence",
-
-    definitionTitle:
-      "AI Through My Eyes",
-
-    definitionText:
-      "I see AI as a space where machines learn from data to help us understand the world and discover possibilities we might not have seen before.",
-
-    definitionFooter:
-      "Not a replacement for imagination, but a tool that expands it.",
-
-    discover:
-      "Discover what surrounds you",
-
-    aroundTitle:
-      "AI is closer than you think",
-
-    aroundIntro:
-      "Choose one of the three doors and discover how AI works around us.",
-
-    visionTitle:
-      "Computer Vision",
-
-    visionShort:
-      "How do machines understand images?",
-
-    languageTitle:
-      "Language Understanding",
-
-    languageShort:
-      "How do machines understand our words?",
-
-    recommendTitle:
-      "Smart Recommendations",
-
-    recommendShort:
-      "How do platforms know what we might like?",
-
-    explore:
-      "Explore →",
-
-    chooseCard:
-      "Choose a door",
-
-    chooseText:
-      "Click one of the elements to discover what is behind it.",
-
-    surprise:
-      "Discover the surprise",
-
-    surpriseTitle:
-      "From Noise to Image",
-
-    surpriseIntro:
-      "Something that fascinated me: some AI models can generate images from random noise by gradually removing the noise.",
-
-    noiseCaption:
-      "Beginning: Random noise",
-
-    reveal:
-      "Reveal how an image forms",
-
-    revealNote:
-      "This is a simplified visual explanation of denoising, not an actual simulation of an image-generation model.",
-
-    sources:
-      "Scientific sources",
-
-    behindScenes:
-      "Behind my experience",
-
-    toolsTitle:
-      "The Human Behind AI",
-
-    toolsIntro:
-      "AI helped me turn an idea into an experience, but my choices and direction gave it its identity.",
-
-    toolOneTitle:
-      "The Tools",
-
-    toolOneText:
-      "Here we identify the tools actually used for research, design, and development.",
-
-    toolTwoTitle:
-      "How AI Helped",
-
-    toolTwoText:
-      "It helped me explore ideas, develop content, and turn concepts into digital elements.",
-
-    toolThreeTitle:
-      "My Contribution",
-
-    toolThreeText:
-      "I chose the experience style, directed the design, reviewed the content, and decided what to change.",
-
-    humanNote:
-      "The tool is in my hands, but the idea, vision, and creative decisions are my responsibility.",
-
-    restart:
-      "Restart the journey",
-
-    noiseAfter:
-      "The image is gradually forming",
-
-    noiseComplete:
-      "From noise to a coherent image",
-
-    visionDetail:
-      "Computer vision systems use models trained on images and data to recognize objects and patterns. Example: helping a car recognize pedestrians.",
-
-    languageDetail:
-      "Language models learn patterns in words and context to help with translation, summarization, and understanding questions.",
-
-    recommendationDetail:
-      "Recommendation systems analyze interaction patterns and interests to suggest content that may be relevant to a user.",
-
-    soundOn:
-      "Sound on",
-
-    soundOff:
-      "Sound off"
-
-  }
-
-};
-
-
-/* =========================================
-   SCENE NAVIGATION
-========================================= */
-
-function showScene(index) {
-
-  if (index < 0 || index >= scenes.length) {
-    return;
-  }
-
-  currentScene = index;
-
-  scenes.forEach((scene, i) => {
-
-    scene.classList.toggle(
-      "active",
-      i === currentScene
-    );
-
-  });
-
-  progressDots.forEach((dot, i) => {
-
-    dot.classList.toggle(
-      "active",
-      i === currentScene
-    );
-
-  });
-
-  playSound("transition");
-
-}
-
-
-function nextScene() {
-
-  if (currentScene < scenes.length - 1) {
-
-    showScene(currentScene + 1);
-
-  }
-
-}
-
-
-function previousScene() {
-
-  if (currentScene > 0) {
-
-    showScene(currentScene - 1);
-
-  }
-
-}
-
-
-nextButton.addEventListener("click", nextScene);
-
-prevButton.addEventListener("click", previousScene);
-
-
-document.querySelectorAll(".next-scene").forEach(button => {
-
-  button.addEventListener("click", nextScene);
-
-});
-
-
-progressDots.forEach(dot => {
-
-  dot.addEventListener("click", () => {
-
-    const index = Number(dot.dataset.scene);
-
-    showScene(index);
-
-  });
-
-});
-
-
-startJourney.addEventListener("click", () => {
-
-  initializeAudio();
-
-  showScene(1);
-
-  playSound("portal");
-
-});
-
-
-restartJourney.addEventListener("click", () => {
-
-  showScene(0);
-
-  resetReveal();
-
-});
-
-
-/* =========================================
-   LANGUAGE TOGGLE
-========================================= */
-
-function updateLanguage() {
-
-  const dictionary = translations[currentLanguage];
-
-  document.documentElement.lang = currentLanguage;
-
-  document.documentElement.dir =
-    currentLanguage === "ar" ? "rtl" : "ltr";
-
-  document.body.dir =
-    currentLanguage === "ar" ? "rtl" : "ltr";
-
-  document.querySelectorAll("[data-i18n]").forEach(element => {
-
-    const key = element.dataset.i18n;
-
-    if (dictionary[key]) {
-
-      element.textContent = dictionary[key];
-
-    }
-
-  });
-
-  languageToggle.textContent =
-    currentLanguage === "ar" ? "EN" : "عربي";
-
-  soundToggle.setAttribute(
-    "aria-label",
-    soundEnabled
-      ? dictionary.soundOn
-      : dictionary.soundOff
-  );
-
-  updateDiscoveryDetail();
-
-  updateRevealCaption();
-
-}
-
-
-languageToggle.addEventListener("click", () => {
-
-  currentLanguage =
-    currentLanguage === "ar" ? "en" : "ar";
-
-  updateLanguage();
-
-  playSound("click");
-
-});
-
-
-/* =========================================
-   DISCOVERY CARDS
-========================================= */
-
-const discoveryCards = [
-  ...document.querySelectorAll(".discovery-card")
-];
-
-let selectedDiscovery = null;
-
-
-function updateDiscoveryDetail() {
-
-  const dictionary = translations[currentLanguage];
-
-  if (!selectedDiscovery) {
-
-    detailTitle.textContent = dictionary.chooseCard;
-
-    detailText.textContent = dictionary.chooseText;
-
-    detailIcon.textContent = "✦";
-
-    return;
-
-  }
-
-  const key = selectedDiscovery;
-
-  const details = {
-
-    vision: {
-      title: dictionary.visionTitle,
-      text: dictionary.visionDetail,
-      icon: "◉"
+(() => {
+  "use strict";
+
+  const copy = {
+    ar: {
+      brand: "غرفة الذكاء الاصطناعي",
+      sound: "الصوت",
+      eyebrow: "مساحة تفاعلية للاستكشاف",
+      headline: "أهلًا بكِ في<br><span>غرفة الذكاء الاصطناعي</span>",
+      instruction: "انقري على العناصر المضيئة واكتشفي ما وراءها",
+      portalLabel: "من الفضول تبدأ الحكاية",
+      click: "اضغطي للاستكشاف",
+      brainLabel: "العقل الذكي",
+      artLabel: "مرسم الخيال",
+      voiceLabel: "بوابة الصوت",
+      visionLabel: "عين الآلة",
+      factLabel: "شرارة فضول",
+      projectLabel: "ورشة الإنجاز",
+      footer: "تجربة تعليمية تفاعلية",
+      discovery: "اكتشاف جديد",
+      back: "العودة إلى الغرفة",
+      soundOn: "تم تفعيل الصوت",
+      soundOff: "تم إيقاف الصوت",
+
+      topics: {
+        brain: {
+          icon: "🧠",
+          title: "ما الذكاء الاصطناعي؟",
+          body: `
+            <p>الذكاء الاصطناعي (AI) هو مجال في علوم الحاسب يطوّر أنظمة تستطيع تنفيذ مهام تحتاج عادةً إلى قدرات بشرية، مثل فهم اللغة، والتعرّف على الصور، والتنبؤ، وحل المشكلات.</p>
+
+            <p><strong>كيف يتعلم؟</strong> تتعلم بعض أنظمة الذكاء الاصطناعي الأنماط من أمثلة وبيانات، ثم تستخدم ما تعلمته لإنتاج توقع أو استجابة عند مواجهة مدخل جديد.</p>
+
+            <div class="highlight">
+              تخيّلي أنكِ تعرضين على النظام آلاف الأمثلة؛ بدل أن تكتبي له كل قاعدة يدويًا، قد يتعلم الأنماط التي تساعده على التعامل مع مثال جديد.
+            </div>
+
+            <p>الذكاء الاصطناعي ليس عقلًا بشريًا داخل جهاز؛ قدراته وحدوده تعتمد على تصميم النظام والبيانات والمهمة المطلوبة.</p>
+          `
+        },
+
+        art: {
+          icon: "🎨",
+          title: "مرسم الخيال: كيف تُولّد الصور؟",
+          body: `
+            <p>يمكن لنماذج توليد الصور أن تنشئ صورة جديدة من وصف نصّي. ومن الطرق المعروفة <strong>نماذج الانتشار (Diffusion Models)</strong>.</p>
+
+            <p>في التدريب، تتعلم هذه النماذج كيف تتعامل مع صور أضيفت إليها مستويات من التشويش. وعند التوليد، تبدأ غالبًا من ضوضاء عشوائية وتزيلها تدريجيًا لتكوين صورة تتوافق مع الوصف.</p>
+
+            <div class="highlight">
+              مثال: إذا كتبنا «مدينة مستقبلية تحت المطر»، يحاول النموذج إنشاء صورة تتوافق مع الكلمات والعلاقات التي تعلمها، وليس استرجاع صورة واحدة بالضرورة.
+            </div>
+
+            <p>النتيجة إبداعية، لكنها قد تحتوي تفاصيل غير دقيقة؛ لذلك من المهم مراجعة الصورة قبل استخدامها.</p>
+          `
+        },
+
+        voice: {
+          icon: "🎙️",
+          title: "بوابة الصوت: كيف يفهم النظام كلامنا؟",
+          body: `
+            <p>تعمل أنظمة الصوت عادةً عبر مراحل، وقد تختلف التفاصيل حسب التقنية المستخدمة:</p>
+
+            <ul>
+              <li><strong>التقاط الصوت:</strong> تسجيل الموجة الصوتية.</li>
+              <li><strong>التعرّف على الكلام:</strong> تحويل الصوت إلى كلمات مكتوبة.</li>
+              <li><strong>فهم اللغة:</strong> تحليل معنى الطلب أو المقصود منه.</li>
+              <li><strong>الاستجابة:</strong> إنشاء رد نصي أو صوتي.</li>
+            </ul>
+
+            <div class="highlight">
+              ميزة الترجمة الصوتية قد تجمع بين التعرّف على الكلام والترجمة النصية ثم توليد الصوت باللغة الجديدة.
+            </div>
+
+            <p>قد يخطئ النظام مع الضوضاء أو اللهجات أو الكلمات غير الواضحة، لذا تبقى المراجعة البشرية مفيدة.</p>
+          `
+        },
+
+        vision: {
+          icon: "👁️",
+          title: "عين الآلة: الرؤية الحاسوبية",
+          body: `
+            <p>الرؤية الحاسوبية (Computer Vision) تساعد الحاسوب على تحليل الصور أو الفيديو واستخراج معلومات منها.</p>
+
+            <p>من تطبيقاتها: اكتشاف الأشياء، تصنيف الصور، قراءة النصوص داخل الصور، ومساعدة أنظمة القيادة على فهم الطريق.</p>
+
+            <div class="highlight">
+              عندما يتعرّف النظام على قطة في صورة، فهو لا «يراها» بالطريقة البشرية؛ بل يحلل أنماطًا وسمات بصرية تعلمها من بيانات التدريب.
+            </div>
+
+            <p>وقد يتأثر الأداء بالإضاءة، وزاوية التصوير، وجودة الصورة، ومدى تمثيل بيانات التدريب للحالات المختلفة.</p>
+          `
+        },
+
+        fact: {
+          icon: "💡",
+          title: "معلومة تثير الفضول",
+          body: `
+            <p>بعض نماذج توليد الصور تستطيع البدء من <strong>ضوضاء عشوائية</strong> ثم تحويلها تدريجيًا إلى صورة مفهومة عبر خطوات متتابعة.</p>
+
+            <p>هذا يعني أن الصورة النهائية لا تكون مخزّنة مسبقًا كملف جاهز ينتظر العثور عليه؛ بل تُنشأ أثناء عملية التوليد وفق ما تعلمه النموذج وما يطلبه الوصف.</p>
+
+            <div class="highlight">
+              السؤال المثير: كيف تتحول نقاط تبدو عشوائية إلى مشهد له أشخاص وألوان وأماكن؟ هنا تظهر قوة النماذج التي تتعلم الأنماط من كميات كبيرة من البيانات.
+            </div>
+
+            <p>هذه الفكرة وصف مبسّط لنماذج الانتشار، وليست وصفًا لكل تقنيات الذكاء الاصطناعي.</p>
+          `
+        },
+
+        project: {
+          icon: "🛠️",
+          title: "ورشة الإنجاز: دوري ودور أدوات الذكاء الاصطناعي",
+          body: `
+            <p>استخدمت أدوات الذكاء الاصطناعي كمساعد في <strong>توليد الأفكار، وتنظيم المحتوى، واقتراح الكود، ومراجعة الصياغة</strong> خلال بناء التجربة.</p>
+
+            <p><strong>دوري أنا:</strong></p>
+
+            <ul>
+              <li>اختيار فكرة الغرفة التفاعلية وتحديد شكل التجربة.</li>
+              <li>اختيار المعلومات التي تظهر في كل ركن وترتيبها.</li>
+              <li>تجربة التفاعلات والترجمة والأصوات ومراجعة النتيجة.</li>
+              <li>تعديل التصميم والكود بما يناسب متطلبات المشروع.</li>
+            </ul>
+
+            <div class="highlight">
+              الأداة تساعد في التنفيذ، لكن اختيار الفكرة، وتحديد الهدف، والتحقق من المحتوى، واتخاذ القرارات النهائية مسؤولية صاحبة المشروع.
+            </div>
+
+            <p><strong>ملاحظة شفافية:</strong> هذه الصفحة تعرض نموذجًا تعليميًا تفاعليًا؛ أصوات النقر نغمات مولّدة برمجيًا، ولا يتصل المشروع هنا بنموذج ذكاء اصطناعي مباشر.</p>
+          `
+        }
+      }
     },
 
-    language: {
-      title: dictionary.languageTitle,
-      text: dictionary.languageDetail,
-      icon: "Aa"
-    },
+    en: {
+      brand: "AI Room",
+      sound: "Sound",
+      eyebrow: "An interactive space to explore",
+      headline: "Welcome to the<br><span>Artificial Intelligence Room</span>",
+      instruction: "Click the glowing objects to discover what’s behind them",
+      portalLabel: "Curiosity starts the story",
+      click: "Click to explore",
+      brainLabel: "The Smart Mind",
+      artLabel: "Imagination Studio",
+      voiceLabel: "Voice Portal",
+      visionLabel: "Machine Vision",
+      factLabel: "Curiosity Spark",
+      projectLabel: "The Workshop",
+      footer: "An interactive learning experience",
+      discovery: "A new discovery",
+      back: "Return to the room",
+      soundOn: "Sound enabled",
+      soundOff: "Sound disabled",
 
-    recommendation: {
-      title: dictionary.recommendTitle,
-      text: dictionary.recommendDetail,
-      icon: "✧"
+      topics: {
+        brain: {
+          icon: "🧠",
+          title: "What is Artificial Intelligence?",
+          body: `
+            <p>Artificial intelligence (AI) is a field of computer science focused on systems that perform tasks typically associated with human abilities, such as language understanding, image recognition, prediction, and problem-solving.</p>
+
+            <p><strong>How does it learn?</strong> Some AI systems learn patterns from examples and data, then use those patterns to produce a prediction or response to new input.</p>
+
+            <div class="highlight">
+              Imagine showing a system thousands of examples. Instead of manually writing every rule, it may learn patterns that help it handle a new example.
+            </div>
+
+            <p>AI is not a human mind inside a device. Its abilities and limits depend on its design, data, and task.</p>
+          `
+        },
+
+        art: {
+          icon: "🎨",
+          title: "Imagination Studio: How are images generated?",
+          body: `
+            <p>Image-generation models can create new images from text prompts. One well-known approach is <strong>diffusion models</strong>.</p>
+
+            <p>During training, models learn from images with different levels of noise. During generation, they often start with random noise and gradually remove it to form an image matching the prompt.</p>
+
+            <div class="highlight">
+              For example, “a futuristic city in the rain” guides the model to create an image aligned with the prompt—not necessarily retrieve one specific image.
+            </div>
+
+            <p>Results can be creative but may contain inaccuracies, so review them before use.</p>
+          `
+        },
+
+        voice: {
+          icon: "🎙️",
+          title: "Voice Portal: How does AI process speech?",
+          body: `
+            <p>Speech systems commonly involve several stages, which vary by technology:</p>
+
+            <ul>
+              <li><strong>Capture:</strong> Record the audio wave.</li>
+              <li><strong>Speech recognition:</strong> Convert audio into text.</li>
+              <li><strong>Language understanding:</strong> Analyze the meaning or intent.</li>
+              <li><strong>Response:</strong> Produce a text or spoken reply.</li>
+            </ul>
+
+            <div class="highlight">
+              Speech translation may combine speech recognition, text translation, and speech generation in another language.
+            </div>
+
+            <p>Noise, accents, and unclear words can affect results, so human review remains useful.</p>
+          `
+        },
+
+        vision: {
+          icon: "👁️",
+          title: "Machine Vision: Computer Vision",
+          body: `
+            <p>Computer vision helps computers analyze images or video and extract information.</p>
+
+            <p>Applications include object detection, image classification, reading text in images, and helping driving systems interpret roads.</p>
+
+            <div class="highlight">
+              When a system recognizes a cat, it does not “see” as a human does; it analyzes visual patterns learned from training data.
+            </div>
+
+            <p>Lighting, camera angle, image quality, and training-data coverage can affect performance.</p>
+          `
+        },
+
+        fact: {
+          icon: "💡",
+          title: "A curiosity-sparking fact",
+          body: `
+            <p>Some image-generation models can begin with <strong>random noise</strong> and gradually transform it into a meaningful image through successive steps.</p>
+
+            <p>The final image is not necessarily a pre-stored file waiting to be found; it is generated according to what the model learned and the prompt.</p>
+
+            <div class="highlight">
+              The fascinating question: how can seemingly random dots become a scene with people, colors, and places? This is where pattern-learning models show their power.
+            </div>
+
+            <p>This is a simplified description of diffusion models, not every AI technique.</p>
+          `
+        },
+
+        project: {
+          icon: "🛠️",
+          title: "The Workshop: My role and AI tools",
+          body: `
+            <p>I used AI tools as assistants for <strong>brainstorming, organizing content, suggesting code, and reviewing wording</strong> while building this experience.</p>
+
+            <p><strong>My role:</strong></p>
+
+            <ul>
+              <li>Choosing the interactive-room idea and defining the experience.</li>
+              <li>Selecting and organizing the information in each room corner.</li>
+              <li>Testing interactions, translation, sounds, and reviewing the result.</li>
+              <li>Adjusting the design and code to fit the project requirements.</li>
+            </ul>
+
+            <div class="highlight">
+              Tools can assist with implementation, but the project creator is responsible for the idea, goals, content checks, and final decisions.
+            </div>
+
+            <p><strong>Transparency:</strong> This is an interactive educational prototype. Click sounds are generated in code; the project is not connected to a live AI model.</p>
+          `
+        }
+      }
     }
-
   };
 
-  const selected = details[key];
+  const $ = (selector) => document.querySelector(selector);
 
-  detailTitle.textContent = selected.title;
+  const backdrop = $("#modalBackdrop");
+  const modalTitle = $("#modalTitle");
+  const modalBody = $("#modalBody");
+  const modalSymbol = $("#modalSymbol");
+  const soundToggle = $("#soundToggle");
+  const langToggle = $("#langToggle");
+  const modalClose = $("#modalClose");
+  const modalDone = $("#modalDone");
 
-  detailText.textContent = selected.text;
+  let language = "ar";
+  let soundEnabled = false;
+  let audioContext = null;
+  let currentTopic = null;
 
-  detailIcon.textContent = selected.icon;
+  function applyLanguage() {
+    const dict = copy[language];
 
-}
+    document.documentElement.lang = language;
+    document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
 
+    document.querySelectorAll("[data-i18n]").forEach((node) => {
+      const key = node.dataset.i18n;
 
-discoveryCards.forEach(card => {
-
-  card.addEventListener("click", () => {
-
-    selectedDiscovery = card.dataset.discovery;
-
-    discoveryCards.forEach(item => {
-
-      item.classList.toggle(
-        "selected",
-        item === card
-      );
-
+      if (dict[key] !== undefined) {
+        node.innerHTML = dict[key];
+      }
     });
 
-    updateDiscoveryDetail();
+    langToggle.textContent = language === "ar" ? "EN" : "ع";
+    soundToggle.setAttribute("aria-pressed", String(soundEnabled));
+    $("#soundIcon").textContent = soundEnabled ? "♫" : "♩";
+  }
 
-    playSound("discovery");
+  function playTone(frequency = 520, duration = 0.09) {
+    if (!soundEnabled) return;
 
+    try {
+      audioContext = audioContext || new (window.AudioContext || window.webkitAudioContext)();
+
+      if (audioContext.state === "suspended") {
+        audioContext.resume();
+      }
+
+      const oscillator = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+
+      oscillator.type = "sine";
+      oscillator.frequency.value = frequency;
+
+      gain.gain.setValueAtTime(0.0001, audioContext.currentTime);
+      gain.gain.exponentialRampToValueAtTime(
+        0.07,
+        audioContext.currentTime + 0.015
+      );
+
+      gain.gain.exponentialRampToValueAtTime(
+        0.0001,
+        audioContext.currentTime + duration
+      );
+
+      oscillator.connect(gain);
+      gain.connect(audioContext.destination);
+
+      oscillator.start();
+      oscillator.stop(audioContext.currentTime + duration + 0.02);
+    } catch (error) {
+      console.warn("Audio is unavailable in this browser.", error);
+    }
+  }
+
+  function openTopic(topicKey) {
+    const topic = copy[language].topics[topicKey];
+
+    if (!topic) return;
+
+    currentTopic = topicKey;
+
+    modalSymbol.textContent = topic.icon;
+    modalTitle.textContent = topic.title;
+    modalBody.innerHTML = topic.body;
+
+    backdrop.classList.add("open");
+    backdrop.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+
+    playTone(650, 0.12);
+    modalClose.focus();
+  }
+
+  function closeModal() {
+    backdrop.classList.remove("open");
+    backdrop.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+
+    playTone(390, 0.07);
+  }
+
+  document.querySelectorAll(".room-object").forEach((object) => {
+    object.addEventListener("click", () => {
+      openTopic(object.dataset.topic);
+    });
   });
 
-});
+  modalClose.addEventListener("click", closeModal);
+  modalDone.addEventListener("click", closeModal);
 
+  backdrop.addEventListener("click", (event) => {
+    if (event.target === backdrop) {
+      closeModal();
+    }
+  });
 
-/* =========================================
-   SURPRISE REVEAL
-========================================= */
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && backdrop.classList.contains("open")) {
+      closeModal();
+    }
+  });
 
-let revealCompleted = false;
+  langToggle.addEventListener("click", () => {
+    language = language === "ar" ? "en" : "ar";
 
+    applyLanguage();
 
-function updateRevealCaption() {
+    if (backdrop.classList.contains("open") && currentTopic) {
+      const topic = copy[language].topics[currentTopic];
 
-  const dictionary = translations[currentLanguage];
-
-  if (revealCompleted) {
-
-    revealCaption.textContent = dictionary.noiseComplete;
-
-  } else {
-
-    revealCaption.textContent = dictionary.noiseCaption;
-
-  }
-
-}
-
-
-function resetReveal() {
-
-  revealCompleted = false;
-
-  revealStage.classList.remove("revealed");
-
-  revealButton.disabled = false;
-
-  revealButton.style.opacity = "1";
-
-  revealButton.querySelector("span").textContent =
-    translations[currentLanguage].reveal;
-
-  updateRevealCaption();
-
-}
-
-
-revealButton.addEventListener("click", () => {
-
-  if (revealCompleted) {
-
-    resetReveal();
-
-    return;
-
-  }
-
-  revealCompleted = true;
-
-  revealStage.classList.add("revealed");
-
-  revealCaption.textContent =
-    translations[currentLanguage].noiseAfter;
-
-  revealButton.querySelector("span").textContent =
-    translations[currentLanguage].restart;
-
-  playSound("reveal");
-
-  setTimeout(() => {
-
-    revealCaption.textContent =
-      translations[currentLanguage].noiseComplete;
-
-  }, 1800);
-
-});
-
-
-/* =========================================
-   SOURCES
-========================================= */
-
-sourceToggle.addEventListener("click", () => {
-
-  sourcePanel.classList.toggle("show");
-
-  playSound("click");
-
-});
-
-
-/* =========================================
-   AUDIO ENGINE
-   No external audio files required
-========================================= */
-
-function initializeAudio() {
-
-  if (!audioContext) {
-
-    const AudioContextClass =
-      window.AudioContext ||
-      window.webkitAudioContext;
-
-    if (!AudioContextClass) {
-
-      return;
-
+      modalSymbol.textContent = topic.icon;
+      modalTitle.textContent = topic.title;
+      modalBody.innerHTML = topic.body;
     }
 
-    audioContext = new AudioContextClass();
+    playTone(580, 0.08);
+  });
 
-  }
+  soundToggle.addEventListener("click", () => {
+    soundEnabled = !soundEnabled;
 
-  if (audioContext.state === "suspended") {
+    applyLanguage();
 
-    audioContext.resume();
+    const toast = $("#toast");
 
-  }
+    toast.textContent = copy[language][
+      soundEnabled ? "soundOn" : "soundOff"
+    ];
 
-}
+    toast.classList.add("show");
 
+    window.setTimeout(() => {
+      toast.classList.remove("show");
+    }, 1800);
 
-function playTone(
-  frequency,
-  duration = 0.3,
-  volume = 0.04,
-  type = "sine",
-  delay = 0
-) {
-
-  if (!soundEnabled) {
-
-    return;
-
-  }
-
-  initializeAudio();
-
-  if (!audioContext) {
-
-    return;
-
-  }
-
-  const oscillator =
-    audioContext.createOscillator();
-
-  const gain =
-    audioContext.createGain();
-
-  const startTime =
-    audioContext.currentTime + delay;
-
-  oscillator.type = type;
-
-  oscillator.frequency.setValueAtTime(
-    frequency,
-    startTime
-  );
-
-  gain.gain.setValueAtTime(
-    0.0001,
-    startTime
-  );
-
-  gain.gain.exponentialRampToValueAtTime(
-    volume,
-    startTime + 0.03
-  );
-
-  gain.gain.exponentialRampToValueAtTime(
-    0.0001,
-    startTime + duration
-  );
-
-  oscillator.connect(gain);
-
-  gain.connect(audioContext.destination);
-
-  oscillator.start(startTime);
-
-  oscillator.stop(startTime + duration);
-
-}
-
-
-function playSound(name) {
-
-  if (!soundEnabled) {
-
-    return;
-
-  }
-
-  switch (name) {
-
-    case "click":
-
-      playTone(700, 0.12, 0.025);
-
-      break;
-
-
-    case "transition":
-
-      playTone(380, 0.25, 0.02);
-
-      playTone(570, 0.3, 0.02, "sine", 0.12);
-
-      break;
-
-
-    case "portal":
-
-      playTone(220, 0.6, 0.035);
-
-      playTone(440, 0.7, 0.03, "sine", 0.18);
-
-      playTone(660, 0.8, 0.02, "sine", 0.35);
-
-      break;
-
-
-    case "discovery":
-
-      playTone(520, 0.25, 0.035);
-
-      playTone(780, 0.35, 0.03, "sine", 0.12);
-
-      break;
-
-
-    case "reveal":
-
-      playTone(330, 0.4, 0.025);
-
-      playTone(440, 0.5, 0.03, "sine", 0.25);
-
-      playTone(660, 0.7, 0.035, "sine", 0.5);
-
-      break;
-
-  }
-
-}
-
-
-/* =========================================
-   SOUND TOGGLE
-========================================= */
-
-soundToggle.addEventListener("click", () => {
-
-  soundEnabled = !soundEnabled;
-
-  soundIcon.textContent =
-    soundEnabled ? "♫" : "×";
-
-  soundToggle.setAttribute(
-    "aria-pressed",
-    String(soundEnabled)
-  );
-
-  if (soundEnabled) {
-
-    initializeAudio();
-
-    playSound("click");
-
-  }
-
-});
-
-
-/* =========================================
-   KEYBOARD NAVIGATION
-========================================= */
-
-document.addEventListener("keydown", event => {
-
-  if (
-    event.key === "ArrowRight" ||
-    event.key === "ArrowLeft"
-  ) {
-
-    if (
-      event.target.tagName === "BUTTON" ||
-      event.target.tagName === "A"
-    ) {
-
-      return;
-
+    if (soundEnabled) {
+      playTone(720, 0.13);
     }
+  });
 
-    if (event.key === "ArrowRight") {
-
-      nextScene();
-
-    } else {
-
-      previousScene();
-
-    }
-
-  }
-
-});
-
-
-/* =========================================
-   INITIALIZATION
-========================================= */
-
-updateLanguage();
-
-showScene(0);
-
-resetReveal();
+  applyLanguage();
+})();
