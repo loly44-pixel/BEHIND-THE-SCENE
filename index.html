@@ -1,508 +1,363 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#070916">
-  <title>AI Universe | عالم الذكاء الاصطناعي</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Room | رحلة داخل الذكاء الاصطناعي</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
+  <div class="background-glow"></div>
 
-  <div class="universe">
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="AI Room">
+      <span class="brand-icon">✦</span>
+      <span>AI ROOM</span>
+    </a>
 
-    <div class="stars" id="stars"></div>
+    <div class="top-actions">
+      <button id="languageBtn" class="icon-btn" type="button">EN</button>
+      <button id="soundBtn" class="icon-btn" type="button" aria-label="تشغيل أو إيقاف الصوت">
+        ♫ <span id="soundLabel">الصوت</span>
+      </button>
+    </div>
+  </header>
 
-    <!-- شريط التحكم -->
-    <header class="topbar">
-      <a class="brand" href="#" id="homeBtn">
-        <span class="brand-symbol">✦</span>
-        <span>AI UNIVERSE</span>
-      </a>
-
-      <div class="controls">
-        <button class="control-btn" id="soundBtn" type="button">
-          <span id="soundIcon">♫</span>
-          <span data-i18n="sound">الصوت</span>
-        </button>
-
-        <button class="control-btn language-btn" id="languageBtn" type="button">
-          EN
-        </button>
-      </div>
-    </header>
-
-    <!-- مؤشر المشاهد -->
-    <nav class="scene-nav" aria-label="Scene navigation">
-      <button class="nav-dot active" data-scene="0" aria-label="البداية"></button>
-      <button class="nav-dot" data-scene="1" aria-label="الغرفة"></button>
-      <button class="nav-dot" data-scene="2" aria-label="الفضول"></button>
-      <button class="nav-dot" data-scene="3" aria-label="المختبر"></button>
-      <button class="nav-dot" data-scene="4" aria-label="التحدي"></button>
-    </nav>
-
-    <main class="scene-container">
-
-      <!-- المشهد الأول: البداية -->
-      <section class="scene active intro-scene" id="introScene">
-
-        <div class="intro-orb">
-          <div class="orb-ring ring-a"></div>
-          <div class="orb-ring ring-b"></div>
-          <div class="orb-core">
-            <span>AI</span>
-          </div>
+  <main>
+    <!-- المشهد الأول: المقدمة -->
+    <section class="scene active" id="scene0">
+      <div class="intro-content">
+        <div class="eyebrow" data-ar="تجربة تفاعلية" data-en="AN INTERACTIVE EXPERIENCE">
+          تجربة تفاعلية
         </div>
 
-        <div class="intro-content">
-          <p class="eyebrow" data-i18n="introEyebrow">
-            تجربة تفاعلية لاستكشاف المستقبل
-          </p>
-
-          <h1 data-i18n="introTitle">
-            هل أنتِ مستعدة<br>
-            <span>لاكتشاف المجهول؟</span>
-          </h1>
-
-          <p class="intro-description" data-i18n="introDescription">
-            رحلة داخل عالم الذكاء الاصطناعي،
-            حيث تتحول الأسئلة إلى اكتشافات.
-          </p>
-
-          <button class="primary-btn" id="startBtn">
-            <span data-i18n="start">ابدئي الرحلة</span>
-            <span class="btn-arrow">←</span>
-          </button>
-        </div>
-
-        <div class="scene-caption">
-          <span class="caption-line"></span>
-          <span data-i18n="introCaption">بوابة الاكتشاف</span>
-          <span class="caption-line"></span>
-        </div>
-
-      </section>
-
-
-      <!-- المشهد الثاني: الغرفة -->
-      <section class="scene room-scene" id="roomScene">
-
-        <div class="room-environment">
-
-          <div class="room-back-wall"></div>
-
-          <div class="room-portal">
-            <div class="portal-ring portal-ring-1"></div>
-            <div class="portal-ring portal-ring-2"></div>
-            <div class="portal-center">
-              <span>AI</span>
-            </div>
-          </div>
-
-          <div class="room-floor"></div>
-
-          <div class="room-grid"></div>
-
-        </div>
-
-        <div class="room-heading">
-          <p class="eyebrow" data-i18n="roomEyebrow">
-            مرحبًا بكِ في عالم الاكتشاف
-          </p>
-
-          <h2 data-i18n="roomTitle">اختاري بوابتكِ</h2>
-
-          <p data-i18n="roomDescription">
-            كل عنصر يحمل قصة عن الذكاء الاصطناعي.
-          </p>
-        </div>
-
-        <div class="room-objects">
-
-          <button class="room-object object-brain" data-topic="brain">
-            <span class="object-glow"></span>
-            <span class="object-visual">🧠</span>
-            <span class="object-title" data-i18n="brainTitle">
-              العقل الذكي
-            </span>
-            <span class="object-subtitle" data-i18n="brainSubtitle">
-              كيف يتعلم؟
-            </span>
-          </button>
-
-          <button class="room-object object-art" data-topic="art">
-            <span class="object-glow"></span>
-            <span class="object-visual">🎨</span>
-            <span class="object-title" data-i18n="artTitle">
-              مرسم الخيال
-            </span>
-            <span class="object-subtitle" data-i18n="artSubtitle">
-              كيف يولد الصور؟
-            </span>
-          </button>
-
-          <button class="room-object object-voice" data-topic="voice">
-            <span class="object-glow"></span>
-            <span class="object-visual">🎙️</span>
-            <span class="object-title" data-i18n="voiceTitle">
-              بوابة الصوت
-            </span>
-            <span class="object-subtitle" data-i18n="voiceSubtitle">
-              كيف يفهم الكلام؟
-            </span>
-          </button>
-
-          <button class="room-object object-vision" data-topic="vision">
-            <span class="object-glow"></span>
-            <span class="object-visual">👁️</span>
-            <span class="object-title" data-i18n="visionTitle">
-              عين الآلة
-            </span>
-            <span class="object-subtitle" data-i18n="visionSubtitle">
-              كيف يرى الصور؟
-            </span>
-          </button>
-
-          <button class="room-object object-curiosity" data-topic="curiosity">
-            <span class="object-glow"></span>
-            <span class="object-visual">💡</span>
-            <span class="object-title" data-i18n="curiosityTitle">
-              شرارة الفضول
-            </span>
-            <span class="object-subtitle" data-i18n="curiositySubtitle">
-              معلومة مدهشة
-            </span>
-          </button>
-
-          <button class="room-object object-lab" data-topic="lab">
-            <span class="object-glow"></span>
-            <span class="object-visual">🛠️</span>
-            <span class="object-title" data-i18n="labTitle">
-              مختبر الإبداع
-            </span>
-            <span class="object-subtitle" data-i18n="labSubtitle">
-              كيف صنعنا التجربة؟
-            </span>
-          </button>
-
-        </div>
-
-        <div class="room-bottom">
-          <span data-i18n="roomHint">
-            انقري على أي مجسم لبدء الاكتشاف
-          </span>
-        </div>
-
-      </section>
-
-
-      <!-- المشهد الثالث: معلومة الفضول -->
-      <section class="scene curiosity-scene" id="curiosityScene">
-
-        <div class="curiosity-background">
-          <div class="curiosity-glow"></div>
-          <div id="particleStage" class="particle-stage"></div>
-        </div>
-
-        <div class="curiosity-content">
-
-          <p class="eyebrow" data-i18n="curiosityEyebrow">
-            معلومة أثارت فضولي
-          </p>
-
-          <h2 data-i18n="curiosityHeading">
-            من الضوضاء<br>
-            <span>إلى صورة مدهشة!</span>
-          </h2>
-
-          <p class="curiosity-description" data-i18n="curiosityDescription">
-            كيف يمكن لنقاط عشوائية أن تتحول إلى صورة واضحة؟
-          </p>
-
-          <div class="curiosity-steps">
-
-            <article class="step-card">
-              <span class="step-number">01</span>
-              <h3 data-i18n="stepOneTitle">ضوضاء عشوائية</h3>
-              <p data-i18n="stepOneDescription">
-                يبدأ النموذج بنمط مليء بالتشويش.
-              </p>
-            </article>
-
-            <article class="step-card">
-              <span class="step-number">02</span>
-              <h3 data-i18n="stepTwoTitle">إزالة التشويش</h3>
-              <p data-i18n="stepTwoDescription">
-                يتعلم النموذج إزالة التشويش تدريجيًا.
-              </p>
-            </article>
-
-            <article class="step-card">
-              <span class="step-number">03</span>
-              <h3 data-i18n="stepThreeTitle">صورة جديدة</h3>
-              <p data-i18n="stepThreeDescription">
-                تتكون صورة تتوافق مع الوصف المطلوب.
-              </p>
-            </article>
-
-          </div>
-
-          <p class="curiosity-note" data-i18n="curiosityNote">
-            هذه العملية من الأفكار الأساسية في نماذج الانتشار.
-          </p>
-
-          <div class="curiosity-actions">
-
-            <button class="primary-btn" id="replayParticles">
-              <span data-i18n="replay">إعادة التجربة</span>
-              <span>↻</span>
-            </button>
-
-            <button class="secondary-btn" id="toLabBtn">
-              <span data-i18n="visitLab">
-                انتقلي إلى مختبر الإبداع
-              </span>
-              <span>←</span>
-            </button>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- المشهد الرابع: المختبر -->
-      <section class="scene lab-scene" id="labScene">
-
-        <div class="lab-background">
-          <div class="lab-orb lab-orb-one"></div>
-          <div class="lab-orb lab-orb-two"></div>
-        </div>
-
-        <div class="lab-content">
-
-          <p class="eyebrow" data-i18n="labEyebrow">
-            خلف كواليس التجربة
-          </p>
-
-          <h2 data-i18n="labHeading">
-            مختبر <span>الإبداع</span>
-          </h2>
-
-          <p class="lab-description" data-i18n="labDescription">
-            كيف اجتمعت الفكرة والتقنية لصناعة هذه التجربة؟
-          </p>
-
-          <div class="lab-cards">
-
-            <article class="lab-card tool-card">
-
-              <div class="lab-card-icon">✦</div>
-
-              <p class="card-label" data-i18n="toolLabel">
-                أداة الذكاء الاصطناعي
-              </p>
-
-              <h3>ChatGPT</h3>
-
-              <p data-i18n="toolDescription">
-                أداة ذكاء اصطناعي ساعدت في تطوير الأفكار،
-                تنظيم المحتوى، واقتراح الأكواد البرمجية.
-              </p>
-
-              <span class="tool-tag">AI ASSISTANT</span>
-
-            </article>
-
-
-            <article class="lab-card contribution-card">
-
-              <div class="lab-card-icon">✧</div>
-
-              <p class="card-label" data-i18n="contributionLabel">
-                مساهمتي الشخصية
-              </p>
-
-              <h3 data-i18n="contributionHeading">
-                أنا صاحبة الفكرة
-              </h3>
-
-              <ul>
-                <li data-i18n="contributionOne">
-                  ابتكار فكرة الغرفة التفاعلية.
-                </li>
-
-                <li data-i18n="contributionTwo">
-                  تحديد أهداف المشروع والمحتوى العلمي.
-                </li>
-
-                <li data-i18n="contributionThree">
-                  اختيار التصميم وتنظيم المشاهد.
-                </li>
-
-                <li data-i18n="contributionFour">
-                  تجربة الأكواد ومراجعة النتائج.
-                </li>
-
-                <li data-i18n="contributionFive">
-                  تطوير التجربة بما يناسب متطلبات المشروع.
-                </li>
-              </ul>
-
-            </article>
-
-          </div>
-
-          <div class="transparency-note">
-
-            <span class="note-icon">✦</span>
-
-            <div>
-              <h3 data-i18n="transparencyHeading">
-                الإنسان + الذكاء الاصطناعي
-              </h3>
-
-              <p data-i18n="transparencyDescription">
-                ساعدت الأداة في التنفيذ والاقتراح،
-                بينما بقيت الفكرة والاختيارات النهائية
-                ومراجعة المحتوى من مسؤولية صاحبة المشروع.
-              </p>
-            </div>
-
-          </div>
-
-          <div class="sources">
-            <span data-i18n="sourcesLabel">المصادر العلمية</span>
-
-            <a href="https://arxiv.org/abs/2006.11239"
-               target="_blank"
-               rel="noopener noreferrer">
-              Denoising Diffusion Probabilistic Models
-            </a>
-
-            <a href="https://arxiv.org/abs/2010.02502"
-               target="_blank"
-               rel="noopener noreferrer">
-              Denoising Diffusion Implicit Models
-            </a>
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- المشهد الخامس: التحدي -->
-      <section class="scene challenge-scene" id="challengeScene">
-
-        <div class="challenge-glow"></div>
-
-        <div class="challenge-content">
-
-          <p class="eyebrow" data-i18n="challengeEyebrow">
-            اختبري معرفتك
-          </p>
-
-          <h2 data-i18n="challengeHeading">
-            تحدي <span>المستكشف</span>
-          </h2>
-
-          <p data-i18n="challengeDescription">
-            هل أصبحتِ مستكشفة للذكاء الاصطناعي؟
-          </p>
-
-          <div class="quiz-panel">
-
-            <div class="quiz-top">
-
-              <span id="questionCounter">01 / 03</span>
-
-              <div class="progress-track">
-                <span id="progressFill"></span>
-              </div>
-
-            </div>
-
-            <h3 id="questionText"></h3>
-
-            <div class="quiz-options" id="quizOptions"></div>
-
-            <p id="quizFeedback" class="quiz-feedback"></p>
-
-            <button class="primary-btn quiz-next" id="nextQuestion" disabled>
-              <span data-i18n="nextQuestion">السؤال التالي</span>
-              <span>←</span>
-            </button>
-
-            <div id="quizResult" hidden>
-
-              <div class="result-symbol">✦</div>
-
-              <h3 data-i18n="resultTitle">
-                أحسنتِ يا مستكشفة!
-              </h3>
-
-              <p id="resultScore"></p>
-
-              <button class="primary-btn" id="restartQuiz">
-                <span data-i18n="restart">إعادة التحدي</span>
-              </button>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
-    </main>
-
-
-    <!-- نافذة المعلومات -->
-    <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
-
-      <section class="info-modal" role="dialog" aria-modal="true">
-
-        <button class="modal-close" id="modalClose" aria-label="Close">
-          ×
-        </button>
-
-        <div class="modal-icon" id="modalIcon">✦</div>
-
-        <p class="modal-kicker" data-i18n="discoveryLabel">
-          اكتشاف جديد
+        <h1 data-ar="ادخلي عالم<br>الذكاء الاصطناعي"
+            data-en="Step Into the<br>World of AI">
+          ادخلي عالم<br>الذكاء الاصطناعي
+        </h1>
+
+        <p class="intro-text"
+           data-ar="رحلة صغيرة داخل غرفة ذكية، اكتشفي فيها كيف تتعلم الآلات، وكيف يمكن للذكاء الاصطناعي أن يدهشنا."
+           data-en="A small journey inside a smart room. Discover how machines learn and how AI can surprise us.">
+          رحلة صغيرة داخل غرفة ذكية، اكتشفي فيها كيف تتعلم الآلات، وكيف يمكن للذكاء الاصطناعي أن يدهشنا.
         </p>
 
-        <h2 id="modalTitle"></h2>
-
-        <div class="modal-content" id="modalContent"></div>
-
-        <button class="primary-btn modal-back-btn" id="modalBackBtn">
-          <span data-i18n="backToRoom">العودة إلى الغرفة</span>
-          <span>←</span>
+        <button class="primary-btn" data-go="1" type="button">
+          <span data-ar="ابدئي الرحلة" data-en="Start the journey">ابدئي الرحلة</span>
+          <span class="arrow">←</span>
         </button>
 
-      </section>
+        <div class="intro-note">
+          <span class="pulse-dot"></span>
+          <span data-ar="استكشفي، انقري، وتعلّمي" data-en="Explore, click, and learn">
+            استكشفي، انقري، وتعلّمي
+          </span>
+        </div>
+      </div>
 
+      <div class="intro-art" aria-hidden="true">
+        <div class="orbit orbit-one"></div>
+        <div class="orbit orbit-two"></div>
+        <div class="ai-core">
+          <span>AI</span>
+          <div class="core-spark">✦</div>
+        </div>
+        <span class="floating-symbol symbol-one">✧</span>
+        <span class="floating-symbol symbol-two">⌘</span>
+        <span class="floating-symbol symbol-three">◈</span>
+      </div>
+    </section>
+
+    <!-- المشهد الثاني: الغرفة التفاعلية -->
+    <section class="scene" id="scene1">
+      <div class="scene-heading">
+        <div>
+          <div class="eyebrow" data-ar="المشهد 01 / الاستكشاف" data-en="SCENE 01 / EXPLORE">
+            المشهد 01 / الاستكشاف
+          </div>
+          <h2 data-ar="مرحبًا بكِ في غرفة الذكاء" data-en="Welcome to the AI Room">
+            مرحبًا بكِ في غرفة الذكاء
+          </h2>
+          <p data-ar="انقري على العناصر المضيئة لتكتشفي ما وراءها."
+             data-en="Click the glowing objects to discover what is behind them.">
+            انقري على العناصر المضيئة لتكتشفي ما وراءها.
+          </p>
+        </div>
+      </div>
+
+      <div class="room">
+        <div class="room-wall">
+          <div class="window">
+            <div class="window-sky">
+              <span class="moon"></span>
+              <span class="star star-a">✦</span>
+              <span class="star star-b">✧</span>
+              <span class="star star-c">✦</span>
+            </div>
+          </div>
+
+          <div class="shelf">
+            <div class="shelf-item">◈</div>
+            <div class="shelf-item">⌘</div>
+            <div class="shelf-item">✦</div>
+          </div>
+
+          <button class="room-object robot-object" data-object="robot" type="button"
+                  aria-label="اكتشفي الروبوت">
+            <span class="object-halo"></span>
+            <span class="robot">
+              <span class="robot-antenna"></span>
+              <span class="robot-face">
+                <span class="robot-eye"></span>
+                <span class="robot-eye"></span>
+                <span class="robot-mouth"></span>
+              </span>
+              <span class="robot-body">AI</span>
+            </span>
+            <span class="object-label" data-ar="الروبوت" data-en="Robot">الروبوت</span>
+          </button>
+
+          <button class="room-object computer-object" data-object="computer" type="button"
+                  aria-label="اكتشفي الحاسوب">
+            <span class="object-halo"></span>
+            <span class="computer">
+              <span class="computer-screen">
+                <span class="screen-glow">AI</span>
+                <span class="screen-line"></span>
+                <span class="screen-line short"></span>
+              </span>
+              <span class="computer-stand"></span>
+            </span>
+            <span class="object-label" data-ar="الحاسوب" data-en="Computer">الحاسوب</span>
+          </button>
+
+          <button class="room-object brain-object" data-object="brain" type="button"
+                  aria-label="اكتشفي الشبكة العصبية">
+            <span class="object-halo"></span>
+            <span class="brain-icon">✺</span>
+            <span class="object-label" data-ar="الشبكة العصبية" data-en="Neural network">
+              الشبكة العصبية
+            </span>
+          </button>
+
+          <div class="room-floor"></div>
+          <div class="floor-light"></div>
+        </div>
+      </div>
+
+      <div class="scene-footer">
+        <span data-ar="تلميح: جرّبي النقر على الروبوت والحاسوب والشبكة العصبية."
+              data-en="Tip: Click the robot, computer, and neural network.">
+          تلميح: جرّبي النقر على الروبوت والحاسوب والشبكة العصبية.
+        </span>
+        <button class="secondary-btn" data-go="2" type="button">
+          <span data-ar="تابعي إلى المعلومة" data-en="Continue to the fact">
+            تابعي إلى المعلومة
+          </span>
+          <span class="arrow">←</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- المشهد الثالث: معلومة أثارت فضولي -->
+    <section class="scene" id="scene2">
+      <div class="fact-layout">
+        <div class="fact-copy">
+          <div class="eyebrow" data-ar="المشهد 02 / معلومة أثارت فضولي"
+               data-en="SCENE 02 / A CURIOUS FACT">
+            المشهد 02 / معلومة أثارت فضولي
+          </div>
+
+          <h2 data-ar="السياق يغيّر<br>المعنى!" data-en="Context changes<br>the meaning!">
+            السياق يغيّر<br>المعنى!
+          </h2>
+
+          <p data-ar="هل تعلمين أن الكلمة الواحدة قد تحمل معاني مختلفة؟ عند الترجمة، يحاول الذكاء الاصطناعي فهم الكلمات المحيطة بها ليختار المعنى الأنسب."
+             data-en="Did you know one word can have different meanings? During translation, AI uses surrounding words to choose the most suitable meaning.">
+            هل تعلمين أن الكلمة الواحدة قد تحمل معاني مختلفة؟ عند الترجمة، يحاول الذكاء الاصطناعي فهم الكلمات المحيطة بها ليختار المعنى الأنسب.
+          </p>
+
+          <div class="word-example">
+            <span class="example-label" data-ar="مثال على كلمة" data-en="Example word">مثال على كلمة</span>
+            <strong class="arabic-word">عين</strong>
+            <div class="meaning-list">
+              <div>
+                <span class="meaning-icon">👁</span>
+                <span data-ar="عين الإنسان" data-en="The human eye">عين الإنسان</span>
+                <b>Eye</b>
+              </div>
+              <div>
+                <span class="meaning-icon">💧</span>
+                <span data-ar="عين ماء" data-en="A water spring">عين ماء</span>
+                <b>Spring</b>
+              </div>
+              <div>
+                <span class="meaning-icon">🕵️</span>
+                <span data-ar="عين تراقب" data-en="A spy">عين تراقب</span>
+                <b>Spy</b>
+              </div>
+            </div>
+          </div>
+
+          <p class="fact-note"
+             data-ar="المعنى الصحيح يعتمد على الجملة، وليس على الكلمة وحدها."
+             data-en="The correct meaning depends on the sentence, not the word alone.">
+            المعنى الصحيح يعتمد على الجملة، وليس على الكلمة وحدها.
+          </p>
+        </div>
+
+        <div class="fact-visual" aria-hidden="true">
+          <div class="translation-card">
+            <div class="translation-top">
+              <span>AR</span>
+              <span class="translation-dots">•••</span>
+              <span>EN</span>
+            </div>
+            <div class="translation-word">عين</div>
+            <div class="translation-line"></div>
+            <div class="translation-line small"></div>
+            <div class="translation-orbit">✦</div>
+          </div>
+          <div class="floating-word word-eye">Eye</div>
+          <div class="floating-word word-spring">Spring</div>
+          <div class="floating-word word-spy">Spy</div>
+        </div>
+      </div>
+
+      <div class="scene-footer">
+        <span data-ar="المعنى يتضح من السياق." data-en="Meaning becomes clear through context.">
+          المعنى يتضح من السياق.
+        </span>
+        <button class="secondary-btn" data-go="3" type="button">
+          <span data-ar="اختبري معرفتك" data-en="Test your knowledge">
+            اختبري معرفتك
+          </span>
+          <span class="arrow">←</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- المشهد الرابع: التحدي -->
+    <section class="scene" id="scene3">
+      <div class="challenge-card">
+        <div class="eyebrow" data-ar="المشهد 03 / تحدّي المستكشفة"
+             data-en="SCENE 03 / EXPLORER CHALLENGE">
+          المشهد 03 / تحدّي المستكشفة
+        </div>
+
+        <div class="challenge-icon">?</div>
+
+        <h2 data-ar="اختاري الترجمة الأنسب" data-en="Choose the best translation">
+          اختاري الترجمة الأنسب
+        </h2>
+
+        <p class="challenge-question"
+           data-ar="في الجملة: «ذهبتُ إلى عين الماء» — ما معنى كلمة «عين» هنا؟"
+           data-en="In the sentence: “I went to the water spring” — what does “عين” mean here?">
+          في الجملة: «ذهبتُ إلى عين الماء» — ما معنى كلمة «عين» هنا؟
+        </p>
+
+        <div class="quiz-options">
+          <button class="quiz-option" data-answer="wrong" type="button">
+            <span>👁</span>
+            <span data-ar="Eye — عين الإنسان" data-en="Eye — human eye">Eye — عين الإنسان</span>
+          </button>
+
+          <button class="quiz-option" data-answer="correct" type="button">
+            <span>💧</span>
+            <span data-ar="Spring — نبع ماء" data-en="Spring — water source">Spring — نبع ماء</span>
+          </button>
+
+          <button class="quiz-option" data-answer="wrong" type="button">
+            <span>🕵️</span>
+            <span data-ar="Spy — جاسوس" data-en="Spy — a spy">Spy — جاسوس</span>
+          </button>
+        </div>
+
+        <div id="quizFeedback" class="quiz-feedback" aria-live="polite"></div>
+
+        <button id="toFinalBtn" class="primary-btn hidden" type="button" data-go="4">
+          <span data-ar="اكتشفي نهاية التجربة" data-en="Discover the ending">
+            اكتشفي نهاية التجربة
+          </span>
+          <span class="arrow">←</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- المشهد الخامس: النهاية -->
+    <section class="scene" id="scene4">
+      <div class="final-content">
+        <div class="final-spark">✦</div>
+        <div class="eyebrow" data-ar="نهاية الرحلة" data-en="THE END">
+          نهاية الرحلة
+        </div>
+
+        <h2 data-ar="أنتِ الآن<br>مستكشفة الذكاء!" data-en="You are now<br>an AI explorer!">
+          أنتِ الآن<br>مستكشفة الذكاء!
+        </h2>
+
+        <p data-ar="تعرفتِ على بعض مفاهيم الذكاء الاصطناعي، واستكشفتِ كيف يساعد السياق في فهم اللغة. لكن رحلة التعلّم لا تتوقف هنا."
+           data-en="You explored AI concepts and discovered how context helps language understanding. But the learning journey doesn't stop here.">
+          تعرفتِ على بعض مفاهيم الذكاء الاصطناعي، واستكشفتِ كيف يساعد السياق في فهم اللغة. لكن رحلة التعلّم لا تتوقف هنا.
+        </p>
+
+        <div class="final-actions">
+          <button id="restartBtn" class="primary-btn" type="button">
+            <span data-ar="إعادة التجربة من البداية" data-en="Restart the experience">
+              إعادة التجربة من البداية
+            </span>
+            <span class="restart-symbol">↺</span>
+          </button>
+        </div>
+
+        <div class="credits">
+          <span data-ar="أداة الذكاء الاصطناعي المستخدمة: ChatGPT"
+                data-en="AI tool used: ChatGPT">
+            أداة الذكاء الاصطناعي المستخدمة: ChatGPT
+          </span>
+          <span data-ar="الفكرة والتصميم والتجربة التفاعلية من إعداد صاحبة المشروع."
+                data-en="The idea, design, and interactive experience were created by the project author.">
+            الفكرة والتصميم والتجربة التفاعلية من إعداد صاحبة المشروع.
+          </span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- أزرار التنقل -->
+  <nav class="scene-nav" aria-label="التنقل بين المشاهد">
+    <button id="prevBtn" class="nav-arrow" type="button" aria-label="المشهد السابق">→</button>
+
+    <div class="nav-dots">
+      <button class="nav-dot active" data-go="0" type="button" aria-label="المشهد الأول"></button>
+      <button class="nav-dot" data-go="1" type="button" aria-label="المشهد الثاني"></button>
+      <button class="nav-dot" data-go="2" type="button" aria-label="المشهد الثالث"></button>
+      <button class="nav-dot" data-go="3" type="button" aria-label="المشهد الرابع"></button>
+      <button class="nav-dot" data-go="4" type="button" aria-label="المشهد الخامس"></button>
     </div>
 
+    <button id="nextBtn" class="nav-arrow" type="button" aria-label="المشهد التالي">←</button>
+  </nav>
 
-    <div class="toast" id="toast" role="status"></div>
+  <!-- نافذة العناصر التفاعلية -->
+  <div id="objectModal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-modal></div>
 
-    <footer class="global-footer">
-      <span data-i18n="footerText">
-        رحلة تفاعلية في عالم الذكاء الاصطناعي
-      </span>
-      <span>✦</span>
-      <span>AI • EXPLORE • CREATE</span>
-    </footer>
-
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button id="modalCloseBtn" class="modal-close" type="button" aria-label="إغلاق">×</button>
+      <div id="modalIcon" class="modal-icon">✦</div>
+      <h3 id="modalTitle">العنصر</h3>
+      <p id="modalText"></p>
+      <button class="secondary-btn" id="modalBackBtn" type="button">
+        <span data-ar="العودة إلى الغرفة" data-en="Back to the room">
+          العودة إلى الغرفة
+        </span>
+      </button>
+    </div>
   </div>
 
   <script src="script.js"></script>
-
 </body>
 </html>
