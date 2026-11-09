@@ -11,6 +11,9 @@
   let audioContext = null;
   let currentTopic = null;
   let toastTimer = null;
+  let quizIndex = 0;
+  let quizScore = 0;
+  let answered = false;
 
   const scenes = $$(".scene");
   const navDots = $$(".nav-dot");
@@ -20,10 +23,10 @@
   const modalTitle = $("#modalTitle");
   const modalContent = $("#modalContent");
 
-  const soundBtn = $("#soundBtn");
-  const languageBtn = $("#languageBtn");
 
-  const toast = $("#toast");
+  /* =====================================
+     المحتوى العلمي والترجمة
+  ===================================== */
 
   const translations = {
 
@@ -31,17 +34,10 @@
 
       sound: "الصوت",
 
-      navIntro: "البداية",
-      navRoom: "الغرفة",
-      navCuriosity: "الفضول",
-      navLab: "المختبر",
-      navChallenge: "التحدي",
-
       introEyebrow: "تجربة تفاعلية لاستكشاف المستقبل",
       introTitle: "هل أنتِ مستعدة<br><span>لاكتشاف المجهول؟</span>",
       introDescription:
         "رحلة داخل عالم الذكاء الاصطناعي، حيث تتحول الأسئلة إلى اكتشافات.",
-
       start: "ابدئي الرحلة",
       introCaption: "بوابة الاكتشاف",
 
@@ -69,11 +65,9 @@
       labSubtitle: "كيف صنعنا التجربة؟",
 
       roomHint: "انقري على أي مجسم لبدء الاكتشاف",
-      discoverFact: "اكتشفي المعلومة المدهشة",
 
       curiosityEyebrow: "معلومة أثارت فضولي",
       curiosityHeading: "من الضوضاء<br><span>إلى صورة مدهشة!</span>",
-
       curiosityDescription:
         "كيف يمكن لنقاط عشوائية أن تتحول إلى صورة واضحة؟",
 
@@ -97,16 +91,12 @@
 
       labEyebrow: "خلف كواليس التجربة",
       labHeading: "مختبر <span>الإبداع</span>",
-
       labDescription:
         "كيف اجتمعت الفكرة والتقنية لصناعة هذه التجربة؟",
 
       toolLabel: "أداة الذكاء الاصطناعي",
-
       toolDescription:
         "أداة ذكاء اصطناعي ساعدت في تطوير الأفكار، تنظيم المحتوى، واقتراح الأكواد البرمجية.",
-
-      toolTag: "AI ASSISTANT",
 
       contributionLabel: "مساهمتي الشخصية",
       contributionHeading: "أنا صاحبة الفكرة",
@@ -118,10 +108,7 @@
       contributionFive:
         "تطوير التجربة بما يناسب متطلبات المشروع.",
 
-      transparencyLabel: "دور الأداة",
-
-      transparencyHeading:
-        "الإنسان + الذكاء الاصطناعي",
+      transparencyHeading: "الإنسان + الذكاء الاصطناعي",
 
       transparencyDescription:
         "ساعدت الأداة في التنفيذ والاقتراح، بينما بقيت الفكرة والاختيارات النهائية ومراجعة المحتوى من مسؤولية صاحبة المشروع.",
@@ -130,7 +117,6 @@
 
       challengeEyebrow: "اختبري معرفتك",
       challengeHeading: "تحدي <span>المستكشف</span>",
-
       challengeDescription:
         "هل أصبحتِ مستكشفة للذكاء الاصطناعي؟",
 
@@ -138,8 +124,7 @@
       resultTitle: "أحسنتِ يا مستكشفة!",
       restart: "إعادة التحدي",
 
-      footerText:
-        "رحلة تفاعلية في عالم الذكاء الاصطناعي",
+      footerText: "رحلة تفاعلية في عالم الذكاء الاصطناعي",
 
       discoveryLabel: "اكتشاف جديد",
       backToRoom: "العودة إلى الغرفة",
@@ -155,14 +140,17 @@
       topics: {
 
         brain: {
+
           icon: "🧠",
+
           title: "العقل الذكي: كيف يتعلم الذكاء الاصطناعي؟",
 
           body: `
             <p>
               الذكاء الاصطناعي (Artificial Intelligence)
               هو مجال في علوم الحاسب يهدف إلى تطوير أنظمة
-              تستطيع تنفيذ مهام تحتاج عادةً إلى قدرات بشرية.
+              تستطيع تنفيذ مهام تحتاج عادةً إلى قدرات بشرية،
+              مثل فهم اللغة والتعرف على الصور والتنبؤ.
             </p>
 
             <p>
@@ -179,15 +167,18 @@
             </div>
 
             <p>
-              لكن الذكاء الاصطناعي ليس عقلًا بشريًا داخل جهاز؛
+              الذكاء الاصطناعي ليس عقلًا بشريًا داخل جهاز؛
               قدراته وحدوده تعتمد على تصميم النظام
               والبيانات والمهمة المطلوبة.
             </p>
           `
         },
 
+
         art: {
+
           icon: "🎨",
+
           title: "مرسم الخيال: كيف يولد الصور؟",
 
           body: `
@@ -221,8 +212,11 @@
           `
         },
 
+
         voice: {
+
           icon: "🎙️",
+
           title: "بوابة الصوت: كيف يفهم النظام الكلام؟",
 
           body: `
@@ -265,8 +259,11 @@
           `
         },
 
+
         vision: {
+
           icon: "👁️",
+
           title: "عين الآلة: الرؤية الحاسوبية",
 
           body: `
@@ -276,9 +273,7 @@
               واستخراج المعلومات منها.
             </p>
 
-            <p>
-              من تطبيقاتها:
-            </p>
+            <p>من تطبيقاتها:</p>
 
             <ul>
               <li>اكتشاف الأشياء داخل الصور.</li>
@@ -300,8 +295,11 @@
           `
         },
 
+
         curiosity: {
+
           icon: "💡",
+
           title: "معلومة أثارت فضولي!",
 
           body: `
@@ -330,8 +328,11 @@
           `
         },
 
+
         lab: {
+
           icon: "🛠️",
+
           title: "مختبر الإبداع: كيف صنعنا التجربة؟",
 
           body: `
@@ -374,17 +375,10 @@
 
       sound: "Sound",
 
-      navIntro: "Intro",
-      navRoom: "Room",
-      navCuriosity: "Curiosity",
-      navLab: "Lab",
-      navChallenge: "Challenge",
-
       introEyebrow: "An interactive journey into the future",
       introTitle: "Are you ready<br><span>to discover the unknown?</span>",
       introDescription:
         "A journey into artificial intelligence, where questions become discoveries.",
-
       start: "Begin the journey",
       introCaption: "Discovery portal",
 
@@ -412,7 +406,6 @@
       labSubtitle: "How did we build this?",
 
       roomHint: "Click an object to begin exploring",
-      discoverFact: "Discover the surprising fact",
 
       curiosityEyebrow: "A fact that sparked my curiosity",
 
@@ -442,16 +435,12 @@
 
       labEyebrow: "Behind the experience",
       labHeading: "Creative <span>Lab</span>",
-
       labDescription:
         "How did creativity and technology come together?",
 
       toolLabel: "AI Tool",
-
       toolDescription:
         "An AI tool that assisted with brainstorming, content organization, and code suggestions.",
-
-      toolTag: "AI ASSISTANT",
 
       contributionLabel: "My contribution",
       contributionHeading: "I am the creator",
@@ -471,8 +460,6 @@
       contributionFive:
         "Developed the experience to meet project requirements.",
 
-      transparencyLabel: "The tool's role",
-
       transparencyHeading:
         "Human + Artificial Intelligence",
 
@@ -483,7 +470,6 @@
 
       challengeEyebrow: "Test your knowledge",
       challengeHeading: "Explorer <span>Challenge</span>",
-
       challengeDescription:
         "Are you now an AI explorer?",
 
@@ -508,7 +494,9 @@
       topics: {
 
         brain: {
+
           icon: "🧠",
+
           title: "The Smart Mind: How does AI learn?",
 
           body: `
@@ -541,8 +529,11 @@
           `
         },
 
+
         art: {
+
           icon: "🎨",
+
           title: "Imagination Studio: How are images generated?",
 
           body: `
@@ -577,8 +568,11 @@
           `
         },
 
+
         voice: {
+
           icon: "🎙️",
+
           title: "Voice Portal: How does AI process speech?",
 
           body: `
@@ -607,8 +601,11 @@
           `
         },
 
+
         vision: {
+
           icon: "👁️",
+
           title: "Machine Vision: Computer Vision",
 
           body: `
@@ -637,8 +634,11 @@
           `
         },
 
+
         curiosity: {
+
           icon: "💡",
+
           title: "A fact that sparked my curiosity!",
 
           body: `
@@ -667,8 +667,11 @@
           `
         },
 
+
         lab: {
+
           icon: "🛠️",
+
           title: "Creative Lab: How did we build this?",
 
           body: `
@@ -709,9 +712,9 @@
   };
 
 
-  /* ---------------------------------
-     Scene navigation
-  --------------------------------- */
+  /* =====================================
+     الانتقال بين المشاهد
+  ===================================== */
 
   function goToScene(index) {
 
@@ -743,7 +746,9 @@
     playTone(420, 0.07);
 
     if (currentScene === 2) {
+
       startParticleAnimation();
+
     }
 
   }
@@ -753,9 +758,7 @@
 
     dot.addEventListener("click", () => {
 
-      const index = Number(dot.dataset.scene);
-
-      goToScene(index);
+      goToScene(Number(dot.dataset.scene));
 
     });
 
@@ -769,9 +772,11 @@
   });
 
 
-  $("#curiosityShortcut").addEventListener("click", () => {
+  $("#homeBtn").addEventListener("click", (event) => {
 
-    goToScene(2);
+    event.preventDefault();
+
+    goToScene(0);
 
   });
 
@@ -783,9 +788,9 @@
   });
 
 
-  /* ---------------------------------
-     Modal
-  --------------------------------- */
+  /* =====================================
+     نافذة المعلومات
+  ===================================== */
 
   function openTopic(topicKey) {
 
@@ -796,7 +801,9 @@
     currentTopic = topicKey;
 
     modalIcon.textContent = topic.icon;
+
     modalTitle.textContent = topic.title;
+
     modalContent.innerHTML = topic.body;
 
     modalBackdrop.classList.add("open");
@@ -884,9 +891,9 @@
   });
 
 
-  /* ---------------------------------
-     Translation
-  --------------------------------- */
+  /* =====================================
+     الترجمة
+  ===================================== */
 
   function applyLanguage() {
 
@@ -911,18 +918,18 @@
     });
 
 
-    languageBtn.textContent =
+    $("#languageBtn").textContent =
       language === "ar" ? "EN" : "ع";
-
-
-    soundBtn.setAttribute(
-      "aria-pressed",
-      String(soundEnabled)
-    );
 
 
     $("#soundIcon").textContent =
       soundEnabled ? "♫" : "♩";
+
+
+    $("#soundBtn").setAttribute(
+      "aria-pressed",
+      String(soundEnabled)
+    );
 
 
     updateQuizLanguage();
@@ -936,7 +943,9 @@
       const topic = dictionary.topics[currentTopic];
 
       modalIcon.textContent = topic.icon;
+
       modalTitle.textContent = topic.title;
+
       modalContent.innerHTML = topic.body;
 
     }
@@ -944,7 +953,7 @@
   }
 
 
-  languageBtn.addEventListener("click", () => {
+  $("#languageBtn").addEventListener("click", () => {
 
     language = language === "ar" ? "en" : "ar";
 
@@ -955,9 +964,9 @@
   });
 
 
-  /* ---------------------------------
-     Sound
-  --------------------------------- */
+  /* =====================================
+     الصوت
+  ===================================== */
 
   function playTone(frequency = 520, duration = 0.1) {
 
@@ -1027,7 +1036,7 @@
   }
 
 
-  soundBtn.addEventListener("click", () => {
+  $("#soundBtn").addEventListener("click", () => {
 
     soundEnabled = !soundEnabled;
 
@@ -1048,11 +1057,13 @@
   });
 
 
-  /* ---------------------------------
-     Toast
-  --------------------------------- */
+  /* =====================================
+     رسائل قصيرة
+  ===================================== */
 
   function showToast(message) {
+
+    const toast = $("#toast");
 
     toast.textContent = message;
 
@@ -1069,9 +1080,9 @@
   }
 
 
-  /* ---------------------------------
-     Stars background
-  --------------------------------- */
+  /* =====================================
+     النجوم
+  ===================================== */
 
   function createStars() {
 
@@ -1079,7 +1090,7 @@
 
     const fragment = document.createDocumentFragment();
 
-    for (let i = 0; i < 90; i++) {
+    for (let i = 0; i < 100; i++) {
 
       const star = document.createElement("span");
 
@@ -1104,47 +1115,38 @@
   }
 
 
-  /* ---------------------------------
-     Curiosity particle animation
-  --------------------------------- */
-
-  let particleAnimationStarted = false;
+  /* =====================================
+     تجربة الضوضاء والجسيمات
+  ===================================== */
 
   function createParticles() {
 
     const stage = $("#particleStage");
 
-    stage.querySelectorAll(".particle").forEach((particle) => {
-
-      particle.remove();
-
-    });
-
+    stage.innerHTML = "";
 
     const fragment = document.createDocumentFragment();
 
-    const count = 140;
-
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < 180; i++) {
 
       const particle = document.createElement("span");
 
       particle.className = "particle";
 
       const startX = Math.random() * 100;
+
       const startY = Math.random() * 100;
 
       particle.dataset.startX = startX;
+
       particle.dataset.startY = startY;
 
       particle.style.left = `${startX}%`;
+
       particle.style.top = `${startY}%`;
 
-      particle.style.opacity = Math.random() * 0.8 + 0.2;
-
-      particle.style.transform =
-        `translate(${Math.random() * 30 - 15}px,
-                   ${Math.random() * 30 - 15}px)`;
+      particle.style.opacity =
+        Math.random() * 0.8 + 0.2;
 
       fragment.appendChild(particle);
 
@@ -1163,24 +1165,24 @@
 
     particles.forEach((particle, index) => {
 
-      const delay = index * 8;
+      const delay = index * 7;
 
       window.setTimeout(() => {
 
-        const centerX = 50;
-        const centerY = 50;
+        const targetX = 50 + (Math.random() * 30 - 15);
 
-        const targetX = centerX +
-          (Math.random() * 30 - 15);
+        const targetY = 45 + (Math.random() * 25 - 12);
 
-        const targetY = centerY +
-          (Math.random() * 30 - 15);
+
+        const startX = Number(particle.dataset.startX);
+
+        const startY = Number(particle.dataset.startY);
 
 
         particle.style.transform =
           `translate(
-            ${targetX - Number(particle.dataset.startX)}vw,
-            ${targetY - Number(particle.dataset.startY)}vh
+            ${(targetX - startX) * 3}px,
+            ${(targetY - startY) * 3}px
           )`;
 
 
@@ -1191,9 +1193,6 @@
       }, delay);
 
     });
-
-
-    particleAnimationStarted = true;
 
   }
 
@@ -1207,9 +1206,9 @@
   });
 
 
-  /* ---------------------------------
-     Quiz
-  --------------------------------- */
+  /* =====================================
+     التحدي
+  ===================================== */
 
   const quizQuestions = {
 
@@ -1309,27 +1308,6 @@
   };
 
 
-  let quizIndex = 0;
-  let quizScore = 0;
-  let answered = false;
-
-
-  function updateQuizLanguage() {
-
-    if ($("#quizResult").hidden === false) {
-
-      $("#questionText").textContent =
-        translations[language].resultTitle;
-
-      return;
-
-    }
-
-    renderQuestion();
-
-  }
-
-
   function renderQuestion() {
 
     const questions = quizQuestions[language];
@@ -1337,7 +1315,6 @@
     const question = questions[quizIndex];
 
     if (!question) return;
-
 
     answered = false;
 
@@ -1359,15 +1336,12 @@
 
     $("#nextQuestion").disabled = true;
 
-
     $("#nextQuestion").style.display = "inline-flex";
 
 
     $("#quizResult").hidden = true;
 
-
     $("#quizOptions").style.display = "flex";
-
 
     $("#quizOptions").innerHTML = "";
 
@@ -1403,17 +1377,14 @@
 
     if (answered) return;
 
-
     const question = quizQuestions[language][quizIndex];
-
-    const options = $$(".quiz-option");
-
 
     if (!question) return;
 
-
     answered = true;
 
+
+    const options = $$(".quiz-option");
 
     options.forEach((option) => {
 
@@ -1423,7 +1394,6 @@
 
 
     const correctIndex = question.answer;
-
 
     options[correctIndex].classList.add("correct");
 
@@ -1464,6 +1434,28 @@
   }
 
 
+  function showQuizResult() {
+
+    $("#quizOptions").style.display = "none";
+
+    $("#nextQuestion").style.display = "none";
+
+    $("#quizResult").hidden = false;
+
+
+    const questions = quizQuestions[language];
+
+    $("#resultScore").textContent =
+      `${translations[language].score}: ${quizScore} ${translations[language].outOf} ${questions.length}`;
+
+
+    $("#progressFill").style.width = "100%";
+
+    playTone(850, 0.15);
+
+  }
+
+
   $("#nextQuestion").addEventListener("click", () => {
 
     const questions = quizQuestions[language];
@@ -1484,30 +1476,7 @@
   });
 
 
-  function showQuizResult() {
-
-    $("#quizOptions").style.display = "none";
-
-    $("#nextQuestion").style.display = "none";
-
-    $("#quizResult").hidden = false;
-
-
-    const questions = quizQuestions[language];
-
-    $("#resultScore").textContent =
-      `${translations[language].score}: ${quizScore} ${translations[language].outOf} ${questions.length}`;
-
-
-    $("#progressFill").style.width = "100%";
-
-
-    playTone(850, 0.15);
-
-  }
-
-
-  function restartQuiz() {
+  $("#restartQuiz").addEventListener("click", () => {
 
     quizIndex = 0;
 
@@ -1517,15 +1486,28 @@
 
     renderQuestion();
 
+  });
+
+
+  function updateQuizLanguage() {
+
+    if ($("#quizResult").hidden === false) {
+
+      $("#questionText").textContent =
+        translations[language].resultTitle;
+
+      return;
+
+    }
+
+    renderQuestion();
+
   }
 
 
-  $("#restartQuiz").addEventListener("click", restartQuiz);
-
-
-  /* ---------------------------------
-     Initialize
-  --------------------------------- */
+  /* =====================================
+     بدء التجربة
+  ===================================== */
 
   createStars();
 
